@@ -1,0 +1,151 @@
+<!-- FullAggrid.component.html -->
+
+<div class="grid-wrapper">
+  <!-- ── Toolbar ─────────────────────────────────────────────────────────────── -->
+  <div class="toolbar">
+    <!-- Quick filter: bound to [quickFilterText] on the grid -->
+    <input
+      class="quick-filter"
+      type="text"
+      placeholder=" Search all columns…"
+      [value]="quickFilter"
+      (input)="onQuickFilterChange($any($event.target).value)"
+    />
+
+    <div class="toolbar-actions">
+      <button
+        class="btn btn-primary"
+        (click)="fetchData()"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="isLoading">Loading…</span>
+        <span *ngIf="!isLoading">Refresh</span>
+      </button>
+
+      <button
+        class="btn"
+        (click)="selectAll()"
+      >
+        Select All
+      </button>
+      <button
+        class="btn"
+        (click)="deselectAll()"
+      >
+        Deselect
+      </button>
+
+      <button
+        class="btn btn-danger"
+        (click)="deleteSelected()"
+        [disabled]="selectedCount === 0"
+      >
+        Delete ({{ selectedCount }})
+      </button>
+
+      <button
+        class="btn"
+        (click)="exportCsv()"
+      >
+        Export CSV
+      </button>
+      <button
+        class="btn"
+        (click)="saveColumnState()"
+      >
+        Save Cols
+      </button>
+      <button
+        class="btn"
+        (click)="restoreColumnState()"
+      >
+        Restore Cols
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Error banner ────────────────────────────────────────────────────────── -->
+  <div
+    *ngIf="errorMsg"
+    class="error-banner"
+  >
+    ⚠️ {{ errorMsg }}
+  </div>
+
+  <!-- ── Stats bar (selection aggregates) ───────────────────────────────────── -->
+  <div
+    class="stats-bar"
+    *ngIf="selectedCount > 0"
+  >
+    <span class="stat">
+      <strong>Selected:</strong>
+      {{ selectedCount }}
+    </span>
+    <span class="stat">
+      <strong>Total Medals:</strong>
+      {{ totalMedals }}
+    </span>
+    <span class="stat">
+      <strong>Total Salary:</strong>
+      {{ formatCurrency(totalSalary) }}
+    </span>
+  </div>
+
+  <!-- ─── AG Grid ────────────────────────────────────────────────────────────────
+       Key bindings explained:
+
+       [rowData]                 → the data array; grid re-renders on reference change
+       [columnDefs]              → column configuration array
+       [defaultColDef]           → fallback ColDef properties for all columns
+       [getRowId]                → stable row identity; REQUIRED for transactions + selection restore
+       [rowSelection]            → 'single' | 'multiple'
+       [suppressRowClickSelection] → only checkboxes / API trigger selection
+       [quickFilterText]         → live global search across all columns
+       [pagination]              → split rows into pages
+       [paginationPageSize]      → rows per page
+       [animateRows]             → smooth sort reorder animation
+       [rowBuffer]               → extra rows rendered outside viewport (smooth scroll)
+       [getRowStyle]             → inline style object per row (costly; prefer getRowClass)
+       [getRowClass]             → CSS class string per row (preferred)
+       [statusBar]               → bottom panels: row count, filter count, aggregation
+       [sideBar]                 → right-side Columns / Filters panels
+       [rowGroupPanelShow]       → 'always' shows the row-group drop zone above headers
+                                   (requires Enterprise; remove if using Community)
+
+       (gridReady)               → grid API available
+       (firstDataRendered)       → first rows painted; correct place to restore selection
+       (selectionChanged)        → checkbox or programmatic selection changed
+       (cellValueChanged)        → user finished editing an editable cell
+       (sortChanged)             → sort applied or removed
+       (filterChanged)           → filter model changed
+       (paginationChanged)       → page changed / page size changed
+       (gridSizeChanged)         → grid container resized
+  ─────────────────────────────────────────────────────────────────────────────── -->
+  <ag-grid-angular
+    class="ag-theme-alpine grid"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [getRowId]="getRowId"
+    [rowSelection]="rowSelection"
+    [suppressRowClickSelection]="suppressRowClickSelection"
+    [quickFilterText]="quickFilter"
+    [pagination]="pagination"
+    [paginationPageSize]="paginationPageSize"
+    [animateRows]="animateRows"
+    [rowBuffer]="rowBuffer"
+    [getRowStyle]="getRowStyle"
+    [getRowClass]="getRowClass"
+    [statusBar]="statusBar"
+    [sideBar]="sideBar"
+    [rowGroupPanelShow]="'always'"
+    (gridReady)="onGridReady($event)"
+    (firstDataRendered)="onFirstDataRendered($event)"
+    (selectionChanged)="onSelectionChanged()"
+    (cellValueChanged)="onCellValueChanged($event)"
+    (sortChanged)="onSortChanged($event)"
+    (filterChanged)="onFilterChanged($event)"
+    (paginationChanged)="onPaginationChanged($event)"
+    (gridSizeChanged)="onGridSizeChanged($event)"
+  ></ag-grid-angular>
+</div>

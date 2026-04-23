@@ -1,0 +1,62 @@
+// Selection Component SCSS
+code {
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+  font-size: 0.9em;
+  color: #d63384;
+}
+
+pre {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+
+  code {
+    background-color: transparent;
+    padding: 0;
+    color: #333;
+  }
+}
+
+.controls-section {
+  button {
+    margin-right: 0.5rem;
+  }
+}
+
+/* FullAggrid.component.scss */
+
+::ng-deep .ag-row-selected {
+  background-color: #ffcccc !important; /* Light red background */
+
+  /* Optional: Change background when hovering over a selected row */
+  &.ag-row-hover {
+    background-color: #fa5b5b !important;
+  }
+}
+
+/* If you want to change the color of the "Blue" selection bar often seen in Alpine theme */
+::ng-deep .ag-theme-alpine {
+  --ag-selected-row-background-color: #ffcccc;
+}
+/* Center normal column headers */
+::ng-deep .ag-theme-alpine .ag-header-cell-label {
+  justify-content: center;   /* horizontal */
+  align-items: center;       /* vertical */
+}
+
+/* Center grouped headers (like your "Medals" group) */
+::ng-deep .ag-theme-alpine .ag-header-group-cell-label {
+  justify-content: center;
+  align-items: center;
+}
+
+/* (Optional) make sure the text itself is centered */
+::ng-deep .ag-theme-alpine .ag-header-cell-text {
+  text-align: center;
+  width: 100%;
+}

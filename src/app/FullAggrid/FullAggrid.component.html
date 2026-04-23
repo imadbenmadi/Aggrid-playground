@@ -1,0 +1,259 @@
+<!-- FullAggrid.component.html -->
+
+<div class="grid-wrapper">
+  <!-- ── Toolbar ─────────────────────────────────────────────────────────────── -->
+  <div class="toolbar">
+    <!-- Quick filter: bound to [quickFilterText] on the grid -->
+    <input
+      class="quick-filter"
+      type="text"
+      placeholder=" Search all columns…"
+      [value]="quickFilter"
+      (input)="onQuickFilterChange($any($event.target).value)"
+    />
+
+    <div class="toolbar-actions">
+      <button
+        class="btn btn-primary"
+        (click)="fetchData()"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="isLoading">Loading…</span>
+        <span *ngIf="!isLoading">Refresh</span>
+      </button>
+
+      <button
+        class="btn"
+        (click)="selectAll()"
+      >
+        Select All
+      </button>
+      <button
+        class="btn"
+        (click)="deselectAll()"
+      >
+        Deselect
+      </button>
+
+      <button
+        class="btn btn-danger"
+        (click)="deleteSelected()"
+        [disabled]="selectedCount === 0"
+      >
+        Delete ({{ selectedCount }})
+      </button>
+
+      <button
+        class="btn"
+        (click)="exportCsv()"
+      >
+        Export CSV
+      </button>
+      <button
+        class="btn"
+        (click)="saveColumnState()"
+      >
+        Save Cols
+      </button>
+      <button
+        class="btn"
+        (click)="restoreColumnState()"
+      >
+        Restore Cols
+      </button>
+
+      <button
+        class="btn"
+        (click)="openAddRowDialog()"
+      >
+        + Add Row
+      </button>
+
+      <!-- Backdrop -->
+      <div
+        *ngIf="add_popup"
+        style="
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        "
+        (click)="closeAddRowDialog()"
+      >
+        <!-- Modal — stopPropagation so clicking inside doesn't close it -->
+        <div
+          style="
+            background: #fff;
+            border-radius: 10px;
+            padding: 24px;
+            width: 360px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          "
+          (click)="$event.stopPropagation()"
+        >
+          <h3 style="margin: 0; font-size: 16px; font-weight: 600">Add Row</h3>
+
+          <input
+            type="text"
+            placeholder="Athlete"
+            #athlete
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+          <input
+            type="text"
+            placeholder="Country"
+            #country
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+          <input
+            type="number"
+            placeholder="Year"
+            #year
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+          <input
+            type="text"
+            placeholder="Sport"
+            #sport
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+          <input
+            type="number"
+            placeholder="Gold"
+            #gold
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+          <input
+            type="number"
+            placeholder="Silver"
+            #silver
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+          <input
+            type="number"
+            placeholder="Bronze"
+            #bronze
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+          <input
+            type="number"
+            placeholder="Salary"
+            #salary
+            style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px"
+          />
+
+          <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px">
+            <button
+              class="btn"
+              (click)="closeAddRowDialog()"
+            >
+              Cancel
+            </button>
+            <button
+              class="btn btn-primary"
+              (click)="
+                submitAddRow({
+                  athlete: athlete.value,
+                  country: country.value,
+                  year: year.value,
+                  sport: sport.value,
+                  gold: gold.value,
+                  silver: silver.value,
+                  bronze: bronze.value,
+                  salary: salary.value,
+                })
+              "
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Error banner ────────────────────────────────────────────────────────── -->
+  <div
+    *ngIf="errorMsg"
+    class="error-banner"
+  >
+    ⚠️ {{ errorMsg }}
+  </div>
+
+  <!-- ── Stats bar (selection aggregates) ───────────────────────────────────── -->
+  <div
+    class="stats-bar"
+    *ngIf="selectedCount > 0"
+  >
+    <span class="stat">
+      <strong>Selected:</strong>
+      {{ selectedCount }}
+    </span>
+    <span class="stat">
+      <strong>Total Medals:</strong>
+      {{ totalMedals }}
+    </span>
+    <span class="stat">
+      <strong>Total Salary:</strong>
+      {{ formatCurrency(totalSalary) }}
+    </span>
+  </div>
+
+  <!-- ─── AG Grid ────────────────────────────────────────────────────────────────
+       Key bindings explained:
+
+       [rowData]                 → the data array; grid re-renders on reference change
+       [columnDefs]              → column configuration array
+       [defaultColDef]           → fallback ColDef properties for all columns
+       [getRowId]                → stable row identity; REQUIRED for transactions + selection restore
+       [rowSelection]            → 'single' | 'multiple'
+       [suppressRowClickSelection] → only checkboxes / API trigger selection
+       [quickFilterText]         → live global search across all columns
+       [pagination]              → split rows into pages
+       [paginationPageSize]      → rows per page
+       [animateRows]             → smooth sort reorder animation
+       [rowBuffer]               → extra rows rendered outside viewport (smooth scroll)
+       [getRowStyle]             → inline style object per row (costly; prefer getRowClass)
+       [getRowClass]             → CSS class string per row (preferred)
+       [statusBar]               → bottom panels: row count, filter count, aggregation
+       [sideBar]                 → right-side Columns / Filters panels
+       [rowGroupPanelShow]       → 'always' shows the row-group drop zone above headers
+                                   (requires Enterprise; remove if using Community)
+
+       (gridReady)               → grid API available
+       (firstDataRendered)       → first rows painted; correct place to restore selection
+       (selectionChanged)        → checkbox or programmatic selection changed
+       (cellValueChanged)        → user finished editing an editable cell
+       (sortChanged)             → sort applied or removed
+       (filterChanged)           → filter model changed
+       (paginationChanged)       → page changed / page size changed
+       (gridSizeChanged)         → grid container resized
+  ─────────────────────────────────────────────────────────────────────────────── -->
+  <ag-grid-angular
+    class="ag-theme-alpine grid"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [getRowId]="getRowId"
+    [rowSelection]="rowSelection"
+    [suppressRowClickSelection]="suppressRowClickSelection"
+    [quickFilterText]="quickFilter"
+    [pagination]="pagination"
+    [paginationPageSize]="paginationPageSize"
+    [animateRows]="animateRows"
+    [rowBuffer]="rowBuffer"
+    [getRowStyle]="getRowStyle"
+    [getRowClass]="getRowClass"
+    [statusBar]="statusBar"
+    [sideBar]="sideBar"
+    [rowGroupPanelShow]="'always'"
+    (gridReady)="onGridReady($event)"
+    (firstDataRendered)="onFirstDataRendered($event)"
+    (selectionChanged)="onSelectionChanged()"
+  ></ag-grid-angular>
+</div>

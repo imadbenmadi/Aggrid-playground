@@ -1,0 +1,326 @@
+// Global Styles and SCSS Variables
+$primary-color: #1976d2;
+$secondary-color: #424242;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$danger-color: #f44336;
+$light-bg: #f5f5f5;
+$border-color: #ddd;
+$text-muted: #666;
+
+// Global Styles
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.main-content {
+  min-height: calc(100vh - 120px);
+  padding: 20px 0;
+}
+
+// Bootstrap Overrides and Custom Components
+.card {
+  border: 1px solid $border-color;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: 0.25rem;
+
+  &-primary {
+    background-color: $primary-color;
+    border-color: $primary-color;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+.page-section {
+  margin-bottom: 2rem;
+
+  h2 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    border-bottom: 2px solid $primary-color;
+    padding-bottom: 0.5rem;
+  }
+
+  h3 {
+    color: $secondary-color;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+}
+
+.example-section {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid $primary-color;
+
+  .example-title {
+    font-weight: 600;
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+
+  .example-description {
+    color: $text-muted;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+}
+
+.explanation-box {
+  background-color: #e3f2fd;
+  border-left: 4px solid $primary-color;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.25rem;
+
+  h4 {
+    color: $primary-color;
+    margin-top: 0;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+  }
+}
+
+.code-box {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+
+  code {
+    font-family: "Courier New", monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
+.info-alert {
+  background-color: #e8f4f8;
+  border-left: 4px solid #00bcd4;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.25rem;
+
+  strong {
+    color: #00796b;
+  }
+}
+
+.success-alert {
+  background-color: #e8f5e9;
+  border-left: 4px solid $success-color;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.25rem;
+}
+
+// AG Grid Custom Styles
+.ag-theme-light {
+  --ag-font-size: 13px;
+  --ag-row-height: 32px;
+  --ag-header-height: 40px;
+  --ag-header-foreground-color: $primary-color;
+  --ag-borders-side-color: $border-color;
+  --ag-row-border-color: $border-color;
+
+  .ag-header-cell {
+    background-color: $light-bg;
+    font-weight: 600;
+  }
+
+  .ag-row:hover {
+    background-color: #f0f7ff;
+  }
+}
+
+.grid-wrapper {
+  background-color: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.grid-container {
+  height: 400px;
+  width: 100%;
+}
+
+.grid-container-tall {
+  height: 600px;
+  width: 100%;
+}
+
+// Controls Section
+.controls-section {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid $border-color;
+
+  .control-group {
+    margin-bottom: 1rem;
+
+    label {
+      font-weight: 500;
+      color: $secondary-color;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid $border-color;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      }
+    }
+  }
+}
+
+// Status Badges
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.badge-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  &.badge-warning {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  &.badge-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  &.badge-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+}
+
+// Tables
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background-color: $light-bg;
+
+    th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: $secondary-color;
+      border-bottom: 2px solid $border-color;
+    }
+  }
+
+  tbody {
+    tr {
+      &:hover {
+        background-color: #f9f9f9;
+      }
+
+      td {
+        padding: 0.75rem;
+        border-bottom: 1px solid $border-color;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .grid-container {
+    height: 300px;
+  }
+
+  .page-section {
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+
+  .controls-section {
+    padding: 0.75rem;
+  }
+}
+
+// Navbar improvements
+.navbar {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .navbar-brand {
+    color: white !important;
+    font-size: 1.3rem;
+    margin-right: 2rem;
+  }
+
+  .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    margin-left: 0.5rem;
+    transition: color 0.2s;
+
+    &:hover {
+      color: white !important;
+    }
+
+    &.active {
+      color: white !important;
+      border-bottom: 2px solid white;
+      padding-bottom: 0.25rem;
+    }
+  }
+}
+
+// Footer
+footer {
+  background-color: $secondary-color;
+  color: white;
+}
