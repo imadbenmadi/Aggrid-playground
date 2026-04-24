@@ -52,6 +52,7 @@ export class FullAggridComponent implements OnInit, OnDestroy {
   private timerId?: ReturnType<typeof setInterval>;
   private readonly REFRESH_INTERVAL_MS = 30_000;   // poll every 30s
   private readonly FETCH_DELAY_MS = 3_000;
+  private readonly FLASHING_DATA_MS = 500;
 
   // ── Grid API ─────────────────────────────────────────────────────────────────
   // Stored on gridReady; used to call imperative grid methods
@@ -77,7 +78,7 @@ export class FullAggridComponent implements OnInit, OnDestroy {
   public rowSelection: 'multiple' = 'multiple';
   // public suppressRowClickSelection = true;
   public suppressRowClickSelection = true;
-
+  public enableCellChangeFlash = true;
   // ─── Status Bar ───────────────────────────────────────────────────────────────
   // Panels shown at the bottom of the grid
   public statusBar: { statusPanels: StatusPanelDef[] } = {
@@ -305,6 +306,17 @@ export class FullAggridComponent implements OnInit, OnDestroy {
 
     this.fetchData();
     this.startAutoRefresh();
+    // if (this.gridApi) {
+    //   this.gridApi.flashCells
+    //     ({ flashDelay: this.FLASHING_DATA_MS });
+    // }
+    // setInterval(() => {
+    //   if (this.gridApi) {
+    //     this.gridApi.flashCells({
+    //       columns: ['salary']
+    //     });
+    //   }
+    // }, this.FLASHING_DATA_MS);
   }
 
   ngOnDestroy(): void {
